@@ -1,0 +1,216 @@
+Programming Assignment #7
+
+Please read the entire README (including the USEFUL INFORMATION section at the bottom) before starting your assignment or 
+asking for help.
+
+#####Description of Task#####
+In this assignment, you will see how a binary tree (or any tree data structure, for that matter) can take use the power of 
+recursion. Recursion allows us to easily manipulate data structures with recursive functions. 
+
+The learning goals of this assignment include:
+#1 To practice using recursion
+#2 To practice using binary (search) trees
+#3 Have an opportunity to handle large datasets
+#4 To practice your memory management skills
+
+This assignment combines the power of binary search trees with a set of data that is as close to the real world as possible: 
+data about local businesses. Users of the website yelp (http://www.yelp.com) can post reviews and recommendation about their 
+local restaurants and share them with the world. Yelp hosts about 102 million reviews for businesses catering to 167 million 
+users a month, who constantly query their servers for information about their local businesses.
+
+One fundamental problem for companies with huge datasets like Yelp is retrieving information from a database. The user 
+experience of the Yelp website would be unacceptable if, hypothetically, all of the data describing the businesses would be 
+stored in a simple array or linked list: It would mean that for every search, the server would have to compare every single 
+entry in the database to the search term.
+
+Of course, this is not how it is done in the real world, and this is where tree data structures like binary search tree come in.
+
+#####Breakdown of Files Included#####
+#1 answer07.h: a header file containing descriptions and declarations of the functions you need to complete for this assignment 
+(you are not required to complete print_tree(...) and print_node(...)).
+#2 yelp_businesses.tsv: A file containing tab separated values of businesses found on Yelp. There is one business per line, for 
+more information, look at the "The Yelp Dataset" section below.
+#3 README: this file.
+
+#####Binary (Search) Trees Explained#####
+From Wikipedia: A binary tree is a tree data structure in which each node has at most two children (referred to as the left 
+child and the right child).
+
+This is similar (and more general) to "linked lists", where nodes have at most one child.
+
+Linked List:
+    O   head/tail   O   head        O   head        O   head
+                    |               |               |
+                    V               V               V
+                    O   tail        O               O
+                                    |               |
+                                    V               V
+                                    O   tail        O
+                                                    |
+                                                    V
+                                                    O   tail
+													
+Note that every linked list is (conceptually) also a binary tree.
+
+Binary Tree:
+    O   root        O   root       O   root            O   root
+                   / \           /   \              /     \
+                  O   O         O     O          O           O
+                left right     / \   / \       /   \       /   \
+                              O   O O   O     O     O     O     O
+                                             / \   / \   / \   / \
+                                            O   O O   O O   O O   O
+
+
+The above diagrams show *full* binary trees, where every node has either zero or two children. It is perfectly acceptable to 
+have a node with one child somewhere in the tree:
+
+More Binary Trees:
+    O   root        O   root       O   root       O   root
+                   / \            / \            / \
+                  O   O          O   O          O   O
+                       \        /                \   \
+                        O      O                  O   O
+
+
+						
+What makes these structures work so well recursively is their naturally recurring instances. If a recursive program can handle 
+one node, then it can handle the entire tree.
+
+The relevant theory for why a binary tree is more efficient than a regular linked list is covered in future courses, but for a 
+teaser, think about this: if you have a collection of N elements in a linked list, and you want to see if element X is in the 
+list, then you need to compare X to every element in the list, a total of N comparisons. However, if you use a binary search 
+tree, you only need to traverse down a single branch, and on average will make around log_2(N) comparisons. (i.e., log-base-2 
+of N.) What it means to "traverse down a single branch" will become clear as you write the code for this assignment.
+
+#####Representing the Yelp Dataset in Binary (Search) Trees#####
+The information available to you in the dataset includes:
+
+ - the name of the business
+ - the address of the business
+ - an average rating of the business on a scale of 1 through 4
+
+You will construct a binary tree from this dataset that is ordered according to the names of the businesses. Recall that there 
+exists a certain C library that provides functions to compare two strings to each other. When you look at an ASCII table, 
+you'll notice that, for a given case (upper or lower), the characters that are in the beginning of the alphabet have values 
+lower than characters that are at the end of the alphabet. In this sense by comparing the values of strings we can sort them 
+alphabetically with these functions. 
+
+This will create a tree data structure with the following properties: 
+
+(1) Each node's left subtree contains nodes with names "less than" "equal to"
+    its own name
+
+(2) Each node's right subtree contains nodes with names "greater than" its
+    own name
+
+(3) All left and right subtrees are binary search trees themselves.
+
+#####The Yelp Dataset#####
+The dataset you'll be working with is a small fraction of the Yelp Academic dataset, which is itself a fraction of Yelp's 
+database that was made public for use in academia. More information and a download for the full dataset can be found here: 
+http://www.yelp.com/dataset_challenge 
+
+The data was converted from the JSON format to a text file filled with tab-separated values with the extension '.tsv'. There 
+is a lot more information in the full dataset, but for this assignment, you will only use the average rating, the name, and 
+the address. The file you're provided with, called 'yelp_businesses.tsv' has information about 42153 businesses in the United 
+States and should be read line by line.
+
+One line in the .tsv file lists one business and is structured like this:
+
+  [rating]\t[name]\t[address]\n
+
+Where \t is the tab character and \n is the newline character.
+
+In order to fill the fields of one node, you need to separate a line according to the delimiter '\t'. Remember your explode() 
+function from PA03? It could come in very handy for this assignment. If you want to use your explode function from PA03, then 
+you will need to copy and paste it somewhere into your answer07.c file. Of course, you don't HAVE to use explode(...) here, as 
+long as you create the nodes properly and without memory leaks.
+						
+#####Assignment Submission#####
+You must submit one file to Blackboard for this assignment: answer07.c. This file should contain the function definitions of 
+the functions declared in answer07.h
+
+If you choose not to complete a certain function, place an empty function definition in your submitted file (more details 
+under the Grading section). 
+
+Following the instructions is part of getting the assignment correct, so please follow the submission instructions.
+
+#####Grading#####
+There are 5 functions to complete in answer07.c (there are actually 7 listed in answer07.h, but two are not graded and are 
+included as debugging suggestions). Successfully writing load_tree_from_file(...) is worth 28% of the grade, while the 
+remaining 4 functions are worth 18% each. 
+
+In order to not cause any compiler errors when grading please make sure your file adheres to the following:
++Please do not include a main function in the filing containing your function definitions.
++Be sure to include the header file in the .c file with your function definitions.
++If you choose not to complete one of the functions, please include an empty function definition that returns the correct 
+data-type.  For example, a blank function definition for tree_search_name may look like the following:
+
+BusinessNode * tree_search_name(char * name, BusinessNode * root)
+{
+	return NULL;
+}
+
+If your program has any errors that prevent it from executing or compilation warnings, you will fail the 
+assignment. 
+
+If you have memory leaks, your point total on this assignment will be deducted by 50% (so if you get 
+70% of the functions correct but you have memory leaks, you'll end up getting 35% on the assignment). You can check for memory 
+leaks using Valgrind with the following command:
+
+valgrind --tool=memcheck --leak-check=full --verbose PROGRAM_NAME PROGRAM_ARGUMENTS
+
+#####USEFUL INFORMATION#####
+###Getting started###
+
+If you are not sure how to start, try writing just create_node(...), and a print_tree(...) function so you can visualize the 
+tree. You should then be able to do the following: 
+
+## Step 1 ##
+Create and print trees like so:
+
+int main(int argc, char * * argv)
+{
+   BusinessNode * root = create_node("5.0", "random name", "random address");
+   root->left = create_node("3.5", "another name", "another address");
+   root->right = create_node("4.0", "yet another name", "some address");
+   root->left->right = create_node("1.5", "name 3", "address 3");
+   print_tree(root);
+   return 0;
+}
+
+## Step 2 ##
+Write destroy_tree(...). You should now have no memory leaks or errors.
+
+## Step 3 ##
+Write tree_insert(...) and make sure it
+always works no matter what is thrown at it.
+
+## Step 4 ##
+Write load_tree_from_file(...), which calls insert in a loop.
+
+## Step 5 ##
+Write tree_search_name() and try to search for some Businesses that you know are in the tree.
+
+At this stage you will be reasonably close to completing the assignment.
+
+
+###Traversing a Tree###
+
+Even though a tree is not an array, it is still easy to "iterate" over all of the elements. Iteration means you want to visit 
+every element once, and only once. You already know how to do this with an array:
+
+int myints[] = { 5, 3, 6, 7 };
+for(ind = 0; ind < 4; ++ind)
+   do_something_with(myints[ind]); // visit each element once and only once
+
+With trees, you choose either pre-order, in-order, or post-order traversal to do the same thing. It is important to understand 
+the difference between these traversal types (you can find more info in the book and lecture notes).
+
+###Testing load_tree_from_file(...)###
+
+To test the load_tree_from_file(...) function, it makes sense to work with a smaller subset of the data. To read the first 5 
+lines of 'yelp_businesses.tsv' into a new file called 'shortFile.tsv', use the following command:
+
+ > cat yelp_businesses.tsv | head -n 5 > shortFile.tsv

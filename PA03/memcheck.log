@@ -1,0 +1,68 @@
+==6767== Memcheck, a memory error detector
+==6767== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==6767== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==6767== Command: ./pa03
+==6767== Parent PID: 1556
+==6767== 
+--6767-- 
+--6767-- Valgrind options:
+--6767--    --tool=memcheck
+--6767--    --leak-check=full
+--6767--    --verbose
+--6767--    --log-file=memcheck.log
+--6767-- Contents of /proc/version:
+--6767--   Linux version 2.6.32-642.el6.x86_64 (mockbuild@x86-033.build.eng.bos.redhat.com) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-17) (GCC) ) #1 SMP Wed Apr 13 00:51:26 EDT 2016
+--6767-- Arch and hwcaps: AMD64, amd64-sse3-cx16
+--6767-- Page sizes: currently 4096, max supported 4096
+--6767-- Valgrind library directory: /usr/lib64/valgrind
+--6767-- Reading syms from /home/shay/a/chi19/264_summer/PA03/pa03
+--6767-- Reading syms from /usr/lib64/valgrind/memcheck-amd64-linux
+--6767--    object doesn't have a dynamic symbol table
+--6767-- Reading syms from /lib64/ld-2.12.so
+--6767--   Considering /usr/lib/debug/.build-id/f3/eebd18e66eb139ea4d76cdfa86d643abcf0070.debug ..
+--6767--   .. build-id is valid
+--6767-- Scheduler: using generic scheduler lock implementation.
+--6767-- Reading suppressions file: /usr/lib64/valgrind/default.supp
+==6767== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-6767-by-chi19-on-ecegrid-thin1.ecn.purdue.edu
+==6767== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-6767-by-chi19-on-ecegrid-thin1.ecn.purdue.edu
+==6767== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-6767-by-chi19-on-ecegrid-thin1.ecn.purdue.edu
+==6767== 
+==6767== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==6767== don't want to do, unless you know exactly what you're doing,
+==6767== or are doing some strange experiment):
+==6767==   /usr/lib64/valgrind/../../bin/vgdb --pid=6767 ...command...
+==6767== 
+==6767== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==6767==   /path/to/gdb ./pa03
+==6767== and then give GDB the following command
+==6767==   target remote | /usr/lib64/valgrind/../../bin/vgdb --pid=6767
+==6767== --pid is optional if only one valgrind process is running
+==6767== 
+--6767-- REDIR: 0x3fd8017d10 (strlen) redirected to 0x38049551 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--6767-- Reading syms from /usr/lib64/valgrind/vgpreload_core-amd64-linux.so
+--6767-- Reading syms from /usr/lib64/valgrind/vgpreload_memcheck-amd64-linux.so
+--6767-- REDIR: 0x3fd8017b20 (index) redirected to 0x4a07c30 (index)
+--6767-- REDIR: 0x3fd8017ba0 (strcmp) redirected to 0x4a08570 (strcmp)
+--6767-- Reading syms from /lib64/libc-2.12.so
+--6767--   Considering /usr/lib/debug/.build-id/24/d3ab3db0f38c7515feadf82191651da4117a18.debug ..
+--6767--   .. build-id is valid
+--6767-- REDIR: 0x3fd8484e60 (strcasecmp) redirected to 0x480155c (_vgnU_ifunc_wrapper)
+--6767-- REDIR: 0x3fd8487120 (strncasecmp) redirected to 0x480155c (_vgnU_ifunc_wrapper)
+--6767-- REDIR: 0x3fd8482dd0 (__GI_strrchr) redirected to 0x4a07ab0 (__GI_strrchr)
+--6767-- REDIR: 0x3fd84812f0 (__GI_strlen) redirected to 0x4a07fb0 (__GI_strlen)
+--6767-- REDIR: 0x3fd8484690 (mempcpy) redirected to 0x4a0a020 (mempcpy)
+--6767-- REDIR: 0x3fd848ac80 (strchrnul) redirected to 0x4a09fb0 (strchrnul)
+--6767-- REDIR: 0x3fd847ba00 (free) redirected to 0x4a063a9 (free)
+==6767== 
+==6767== HEAP SUMMARY:
+==6767==     in use at exit: 0 bytes in 0 blocks
+==6767==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==6767== 
+==6767== All heap blocks were freed -- no leaks are possible
+==6767== 
+==6767== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 6 from 6)
+--6767-- 
+--6767-- used_suppression:      4 U1004-ARM-_dl_relocate_object
+--6767-- used_suppression:      2 glibc-2.5.x-on-SUSE-10.2-(PPC)-2a
+==6767== 
+==6767== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 6 from 6)

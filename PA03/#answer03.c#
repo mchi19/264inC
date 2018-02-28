@@ -1,0 +1,111 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "answer03.h"
+
+char * strcat_ex(char ** dest, int * n, const char * src)
+{
+	char * buffer;
+	int len1 = strlen(*dest);
+	int len2 = strlen(src);
+	if(*dest == NULL)
+	{
+		*n = 1 + 2*strlen(src);
+		*dest = malloc(*n * sizeof(char));
+		strcat(*dest,src);
+		return *dest;
+	}
+	if((len1+len2+1) > *n)
+	{
+		*n = 1 + 2*(len2 + len1);
+		buffer = malloc(*n * sizeof(char));
+		strcpy(buffer, *dest);
+		free(*dest);
+		*dest = buffer;
+		strcat(*dest, src);
+	}
+	else
+	{
+		strcat(*dest, src);
+	}
+	return *dest;
+}
+/*	//int len1 = strlen(*dest); //*dest length
+	//int len2 = strlen(src); //src length
+	char * buffer;
+	if(*dest == NULL)
+	{
+		*n = 1 + 2*strlen(src);
+		*dest = malloc(1 + 2 * strlen(src) * sizeof(char));
+		strcat(*dest,src);
+		return *dest;
+	}
+	if((strlen(*dest) + strlen(src)+1) > *n)
+	{
+		int len1 = strlen(*dest);
+		int len2 = strlen(src);
+		buffer 
+		(char *) malloc(1 + 2 * (len1+len2));
+		*n = strlen(buffer);
+		strcpy(buffer,*dest);
+		free(*dest);
+		*dest = buffer;
+		strcat(*dest, src);
+	}
+	else
+	{
+		strcat(*dest, src);
+	}
+	return *dest;
+}
+*/
+/*char ** explode(const char * str, const char * delims, int * arrLen)
+{
+	strchr(delims,str[]);
+	memcpy(str,);
+	strchr();
+	return 
+}
+
+char * implode(char ** strArr, int len, const char * glue)
+{
+	int i;
+	int j;
+	char * str; //temporary string
+	for(i = 0; i < len; i++)
+	{
+		for(j = 0; j < len; j++)
+		{
+			if(strArr[i][j] == '\0')
+			{
+				strcat_ex(strArr, &len, glue);
+			}
+		}
+	}
+}
+
+void sortStringArray(char * * arrString, int len)
+{
+
+}
+
+void sortStringCharacters(char * str)
+{
+
+}
+
+void destroyStringArray(char * * strArr, int len)
+{
+	int i;
+	int j;
+	for(i = 0; i < len; i++)
+	{
+		for(j = 0; j < len; j++)
+		{
+			free(strArr[i][j]);
+		}
+		free(strArra[i]);
+	}
+	free(strArr);
+}
+*/

@@ -1,0 +1,146 @@
+Programming Assignment #2
+
+Please read this entire document before starting your assignment or asking for help. The Useful Information section at the end has a lot of helpful knowledge for this assignment.
+
+#####Description of Task#####
+In this assignment you will be implementing some standard C-library string functions. This will allow you to better understand how strings work and also get you acquainted with the C standard library. You can view the official documentation of the functions you will be writing in this assignment using the man command. Simply type "man functionName" (without quotes and where functionName is the name of the function you want to see documentation on) into the terminal to view the documentation. 
+
+We have not included an answer02.c file, you will need to create that yourself. Read the description of the functions described in answer02.h and write out your answer02.c accordingly. pa02.c has a main function that you can use to call and test the functions you made in answer02.c. Some tests have already been given to you but you will need to make more to be sure all of the functions works properly
+
+Do NOT include <string.h> in this assignment.
+
+
+#####Assignment Submission#####
+Please submit the file answer02.c on Blackboard. This file is similar to answer01.c from PA01 as it should contain all the functions described in the header file (answer02.h).
+
+#####ACCESS######
+For this assignment, only half of the class should be able to use this assignment on ACCESS. On the next assignment, the groups will be switched.
+
+#####Grading#####
+There are 9 functions on this assignment, but they are weighted differently. my_atoi, my_strstr, my_strchr, and my_strrchr are each worth 15% of the assignment grade, where the remaining functions are each worth 8%. If the function works properly, you will earn full credit. If it does not work properly, you will not get any credit for that function. 
+
+If your program has any errors (that prevent it from executing), compilation warnings, or memory leaks, you will fail the assignment. Use valgrind or the built-in Memory tool on ACCESS to check for memory leaks. You probably won't run into issues of memory leaks for this assignment, but you start familiarizing yourself with the tools now because you will run into memory leak problems on future assignments.
+
+
+#####Summary#####
+#Compile 
+ > gcc -Wall -Wshadow -g pa02.c answer02.c -o pa02
+
+#Run -- you must write your own tests
+ > ./pa02
+ 
+#Submit answer02.c to Blackboard
+
+#####Useful Information for this Assignment#####
+
+##########
+1) #include
+
+The #include statements tell gcc to copy and paste the files <stdio.h>and "answer02.h" into the top of the document. (Literally, copy and paste.) The angle brackets on <stdio.h> tells gcc that stdio.h is a system header file. The quotes tell gcc to look in the current directory, so "answer02.h" must be in the same directory as your .cfile.
+
+Once included, you can use any functions that are declared in the
+header file. Header files must only contain declarations.
+
+// A function declaration... does not compile into anything
+size_t my_strlen(const char * str);
+
+// A function definition... compiles into code... never put a
+// definition in a .h file. (They belong in .c files.)
+size_t my_strlen(const char * str)
+{
+   return 0; // not very useful though.
+}
+
+The last step of building a computer program is called "linking". gcc locates all of the definitions in a collection of compilation units(.c files), and glues everything together.
+
+Never, NEVER, include a .c file:
+
+// BAD
+#include "answer02.c"
+
+##########
+2) answer02.c
+You will need to write answer02.c for this assignment. To do this, create a new file (make sure it is saved with the .c extension) and then type your code. You may want to start with:
+
+#include "answer02.h"
+
+size_t my_strlen(const char * str)
+{
+   return 0;
+}
+
+##########
+3) size_t
+
+size_t is read as "size-type" and is simply a form of unsigned integer. The C library uses size_t to denote the size of something.
+
+##########
+4) Undefined behavior 
+Assumptions are always made whenever a function is written, in any computer language. Programming gets extremely complex surprisingly quickly, and for this reason, good programmers always specify what their assumptions are. These assumptions are often called "preconditions". If the preconditions are met, then the function will execute perfectly (assuming there is nothing else wrong with the program). If the preconditions are not met, then something will happen, but no guarantees are made. This is called "undefined behavior", and is always absent from good computer programs. Thus, it is always a bug to call a function without meeting its preconditions, even if the function seems to otherwise work.
+
+A precondition of the strlen(const char * str) function is that "str" is a pointer to a valid C string. If you pass a pointer to an integer, an invalid pointer, or a NULL pointer, then the behavior is undefined. It is up to the function caller to ensure that "str" is a C string, and the strlen(...) function itself is under no obligation to check this. Thus in most implementations, calling strlen(NULL) will crash your program.
+
+##########
+5) const
+
+"Const" is a type "qualifier". That means that you can take any type and add const to it. (ie., qualify the type with a const.) When so qualified, the compiler will try to stop you from modifying the value. So:
+
+const int x = 4;
+x += 4; // ERROR: assignment of read-only variable 'x'
+
+const char * str = "Hello World!";
+str[0] = 'h'; // ERROR: assignment to read-only location *str
+
+If you try to return a const pointer as a non-const pointer, then gcc
+will give you what seems at first like a cryptic warning message:
+
+char * my_strchr(const char * str, int ch)
+{
+   return str; // warning: return discards 'const' qualifier 
+               // from pointer target type
+}
+
+Can you see that the 'const' "qualifier" has been 'discarded'? It is really very straight-forward once you are familiar with the jargon. To circumvent this warning, you use a type-cast, which tells the compiler that you really want to do this. See below for why this is done.
+
+char * my_strchr(const char * str, int ch)
+{
+   return (char *) str; // no warning.
+}
+
+You can always treat a non-const type as const.
+
+##########
+6) Use of const in my_strchr, my_strrchr, and my_strstr
+
+The C programming language has a long history, and a number of programming conventions, called "idioms". Returning non-const pointers is a widely used idiom in the C language, it ensures that the same function can be used for const and non-const purposes. In C, *you*, the programmer, are expected to get things right, and as such, const is merely a guide.
+
+const char * s1 = my_strchr("Hello World!", 'o'); // fine
+char * s2 = my_strchr("Hello World!", '!'); // also fine
+s2[0] = '\0'; // compiles without warning, but will fail miserably
+
+In short, do not expect C to hold your hand.
+
+##########
+7) Form-feeds, carriage returns, and vertical tabs
+
+
+The ASCII character set includes special control characters which can be used to control the format of text output. Some of these control characters are rarely used. For example, if you terminal is correctly set up, then you can produce an audible beep by printing a "bell"
+character: '\a'. Most modern terminals have beeps disabled by default (mercifully).  Some control characters are still very important, such as '\n', which specifies a newline character.
+
+It is important to understand that text data is just a sequence of 1sand 0s, and it is *interpreted* as text according to an encoding ("code-book") which says things like "this binary value means that character". By default, C uses ASCII encoding, which has a number of different white-space capabilities. Historically, all of these characters were used so that a programmer could position the head of a printer at specific locations on a page. This capability has long been superseded; however, it is important to appreciate it in order to use ASCII correctly, and it just may come up in a future job -- updating some of the millions of lines of legacy code still used by corporate America.
+
+The C standard specifies white-space to be:
+(1) '\t', (ASCII value 9). Interpreted as a fixed number of space
+characters. Historically this was typically 8 spaces.
+(2) '\n', (ASCII value 10). So called 'line-feed', historically goes
+to the next line but at the same horizontal position. The '\n' is now
+always interpreted as a new line character, which implicitly includes
+a 'carriage-return' (see below).
+(3) '\v', (ASCII value 11). Interpreted as a fixed number of 
+new-lines. Historically this was typically 6 new lines.
+(4) '\f', (ASCII value 12). A 'form-feed', historically asks the 
+printer to eject the current page, and start a new one.
+(5) '\r', (ASCII value 13). A 'carriage-return', historically moves 
+the cursor to the beginning of the line. (Thus, a 'new line' 
+character is conceptually a line-feed and a carriage-return in one.)
+(6) ' ', (ASCII value 32). The space character.

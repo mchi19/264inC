@@ -1,0 +1,217 @@
+Programming Assignment #5
+
+Please read this entire document, including the Useful Information section, before starting your assignment or 
+asking for help.
+
+#####Description of Task#####
+For this assignment you will be read and write image "normalize" them. Normalization is sometimes referred to as 
+contrast stretching, and is an image enhancement technique that (in general) improve the viewing quality of washed 
+out or dark images. The goals of this assignment are to:
+
+#1 Understand how to use structs
+#2 Read and write to binary files in a robust and safe manner
+#3 Managing memory in functions with many if statements
+#4 Learn about hexadecimal numbers
+
+In the sections below, we describe each part you'll need to do, Reading an image, normalizing an image, and saving 
+an image.
+
+#####Breakdown of Files Included#####
+
+1. answer05.h: The assignment's header file that contains the declarations for functions you must implement.
+2. diff-plus.c: A short program that you can compile and use to test if two image files are "different". (See 
+   discussion on linear normalization below).
+3. image-bmp.c: Code for reading and writing to Windows' ".bmp" files.
+4. main.c: Some example code to help you get started.
+5. images: A directory of images, described below.
+6. README: This file
+
+
+##### Image Files Explained #####
+The images directory contains four collections of images:
+1. bmps: a set of five unnormalized (washed-out) and five normalized images. Please look at these files before 
+proceeding. You should be able to view them with any standard image viewer.
+2. originals: The original images that were used to generate the bmps. You do not need to do anything with then, 
+they are there for reference.
+3. corrupt-testcases: These files are all corrupted, but in different ways. Your Image_load(...) function should 
+return NULL when attempting to read any of these files. Furthermore, you should have no memory errors.
+4. The ee264 images: For each bmp file in the bmps directory, there is an equivalent ee264 file. See below for a 
+description of the ee264 file format. You may not be able to view the images themselves in this format, but there 
+are other ways to check the information inside them (e.g. the diff-plus program, hex editors). A major part of the 
+assignment involves reading and writing ee264 images.
+
+##### The ee264 Format #####
+The "ee264" image format supports 8-bit grayscale images. That means that every pixel in the image has a single 
+8-bit value [0..255], that denotes the intensity (amount of whiteness) at that pixel.
+
+The following diagram summarizes the byte layout of ee264 files:
+
+  -----------------------------------------------
+  | magic-number | width | height | comment-len |  16 bytes (the header)
+  |----------------------------------------------
+  |           comment with null-byte            |  comment-len bytes
+  |----------------------------------------------
+  |                 pixel data                  |  width*height bytes
+  -----------------------------------------------
+  
+The file has a 16 byte header whose binary layout is given by the struct ImageHeader in the file "answer05.h". The 
+full explanation of this header is:
+
++ 4 byte integer: "magic number" 0x21343632. 
+                  The first 4 bytes of the file always start with
+                  this number (in little-endian format). If this
+                  number is absent, then there is something wrong
+                  with the file.
++ 4 byte integer: width of the image
++ 4 byte integer: height of the image
++ 4 byte integer: length of an ASCII string file comment *including*
+                  the NULL-byte
+				  
+The next comment-len bytes is a null-terminated ASCII string. The length of the string is specified in the last 
+field of the header. The length *includes* the trailing NULL byte.
+
+After the ASCII string, there are width*height bytes of pixel data. Each byte is unsigned, and represents the 
+intensity of a pixel in the range [0..255]. The intensity of the pixel is its "whiteness". A value of 255 denotes 
+a fully white pixel, and a value of 0 denotes a fully black pixel.
+
+After the ASCII string, there are width*height bytes of pixel data. Each byte is unsigned, and represents the 
+intensity of a pixel in the range [0..255]. The intensity of the pixel is its "whiteness". A value of 255 denotes 
+a fully white pixel, and a value of 0 denotes a fully black pixel. 
+
+In general, pixel[x, y] == image->data[x + y * width] where (x, y) is the x-y coordinate of the pixel, with x 
+increasing left-to-right, and y increasing top-to-bottom.
+
+Most dangerous real-world computer bugs are related to programmers not sufficiently checking the inputs to their 
+programs. So for this assignment, you will need to think very carefully about what could go wrong when reading a 
+file. If anything goes wrong, you return NULL and leak no resources. In this way your code will be bullet-proof; 
+even a malicious user could not crash your program and thereby take control of the computer.
+
+#####Reading an Image File#####
+You are supplied with a few test images, including corrupt test images. These test-cases are 
+provided in order to simplify and standardize the assignment, and ease the learning process. 
+However, in real-world scenarios, you will need to generate your own testcases, including 
+corrupt test cases. By the end of this assignment, you should understand how to go about doing 
+precisely that.
+
+A big, *big*, hint is to look at the code in image-bmp.c. You don't have to do everything you 
+see there, or even the same things; however, it should give you a pretty good idea of where to 
+start and how to go about it.
+
+The following is a list of things that you should check for. In real-world scenarios, you'll 
+have to develop this list yourself. If there are *any* errors, then return NULL, and leak no 
+resources.
+
+#1 Make sure you can open the file
+#2 Read the header:
+	#2.a Make sure that you can read all the bytes of the header
+	#2.b Make sure that the magic_number in the header is correct
+	#2.c Make sure that neither the width nor height is zero
+	#2.d Make sure that the comment length is not zero. (Remember, it
+	includes the null-byte.)
+	#3 Allocate space for the image, comment, and pixels. Remember,
+	malloc will return NULL if it cannot do its job.
+#4 Read the comment:
+	#4.a Make sure you read the entire comment
+	#4.b Make sure the comment ends in a null-byte.
+#5 Read the pixels:
+	#5.a Make sure you read *all* width*height pixels
+	#5.b Make sure you've reached the end of the file. (i.e., there are
+	no trailing bytes of data past the end of the pixel data.)
+
+	
+A suite of corrupt image files is provided to help ensure that you get all of this correct. Your code must 
+successfully return NULL for *every* corrupted image, and leak no resources.
+
+#####Linear Normalization#####
+Imagine that the intensity values in your input image are in the range [50..180]. The image looks gray and washed 
+out. You can "normalize" the image, which means applying a mathematical function that "stretches" the intensity 
+values to give a more satisfying image. We are going to use "linear normalization" which is the simplest 
+normalization method. It works as follows:
+
+(1) Find the min and max intensity values of the image pixels.
+(2) Now scale each pixel so that its new intensity is:
+       pixel[i] = (pixel[i] - min) * 255.0 / (max - min)
+
+That's it! For the above example the equation is:
+
+       pixel[i] = (pixel[i] - 50) * 255.0 / (180 - 50)
+
+To implement this, you need two for loops, one after the other. The first for-loop completes step (1), and the 
+second for-loop to completes step (2). 
+
+
+#####Saving an Image File#####
+Saving an image is easier than reading an image, because you can assume (as a precondition) that the Image struct 
+is valid because it comes from inside the program. Thus you do not have to worry about the plethora of errors that 
+may be encountered when reading an input. Remember, inputs come from outside of the program, and hence you have no 
+control over what is actually received.
+
+In this part of the assignment, you merely have to take an Image struct and write it out in the prescribed format.
+
+#####Checking Your Results with diff-plus#####
+Read the code for diff-plus. (It is short.) Use this program to check if two files are the "same" as each other. 
+Diff-plus is similar to the unix "diff" command; however, it accepts a little wiggle room, which may occur due to 
+rounding errors in the linear normalization process.
+
+You should use diff-plus to check at least the following:
+(1) Read a bmp or ee264 file, write it as ee264 or bmp, respectively.
+(2) Read a bmp file, apply normalization, and save it as bmp.
+(3) Read an ee264 file, apply normalization, and save it as bmp.
+
+Don't forget that you must also test all of the corrupt testcases.
+
+
+#####Assignment Submission#####
+To submit your assignment, upload your completed answer05.c to Blackboard in the specified section. 
+
+If you are using ACCESS to complete this assignment, you will need to download your code from ACCESS and combine 
+each function file into one answer01.c file (do not submit each function's C file from ACCESS). Be sure to double 
+check that your code works when it is combined into one file this way.
+
+#####ACCESS######
+If were not able to use ACCESS for PA03, you will be able to use it for PA05. 
+
+However, this time we are doing things different as we will not be providing you with the test cases for corrupt 
+images. You will have to test the corrupt images on your code with your own tests.
+
+#####Grading#####
+There are 4 functions to complete in answer05.c. Successfully writing Image_load(...) is worth 50%, 
+Image_save(...) is 20% and Image_free(...) and linearNormalization(...) are both worth 15%. To earn full credit 
+you must properly implement each function.
+
+If your program has any errors that prevent it from executing or compilation warnings, you will fail the 
+assignment. If you have memory errors, your point total on this assignment will be deducted by 50% (so if you get 
+70% of the functions correct but you have memory errors, you'll end up getting 35% on the assignment). Use Valgrind 
+or the built-in Memory tool on ACCESS to check for memory leaks.
+
+#####Useful Information#####
+
+#1. Image Headers
+Although a file is just a stream of bytes (1s and 0s), logically speaking, they are generally divided into a 
+"header" structure and a "data" structure. The "header" explains the layout of the "data".
+
+#2. Hexadecimals
+
+When reading and writing binary files, it helps to look at the files in a hex-editor. Hex editors show a file as a 
+sequence of hexadecimal (base-16) numbers. (If you don't yet understand base-16 notation, then now is a good time 
+to learn this simple and important concept.) 
+
+There are many hex-editors available. One such editor installed on the lab computers is emacs. You can look at the 
+raw byte-structure of a file in emacs by using "hexl-mode" (M-x hexl-mode). You can also use the shell command 
+hexdump to look at the hexadecimal numbers in your terminal.
+
+#3. Testing your code 
+
+First, compile the diff-plus.c program:
+
+> gcc -Wall -Wshadow -g diff-plus.c -o diff-plus
+
+You use this program to test if two files are approximately the same. For more info, type:
+
+ > ./diff-plus --help
+ 
+Now you need to write a short program that will read a file, apply normalization to it, and write it out. The code 
+in "main.c" should get you started.
+
+Once you have this program, you can apply normalization to various bmp or ee264 images. Compare your results to 
+the supplied file with ./diff-plus.

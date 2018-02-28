@@ -1,0 +1,98 @@
+Programming Assignment #6
+
+Please read the entire README before starting the assignment or asking for help.
+
+#####Description of Task#####
+
+Recursion is an elegant (simple, yet effective) method for solving many problems. It seems tricky at first; but it is actually 
+very simple once you are used to it. The key thing to understand is that recursive programming has two steps:
+
+#1 A trivial base case that occurs with a terminating condition
+#2 A recursive case where you write the solution for the larger, more complex case in terms of the solution to the smaller, 
+simpler cases.
+
+What makes (2) easy is that you simply *assume* that you have the solution of a smaller case because eventually our recursive
+calls will lead us to the base case(s). While generally speaking you can't always make assumptions about having a solution you
+haven't yet found, recursion allows things to work this way (in part due to induction).
+
+In this assignment, we will use #1 and #2 above to sort linked-lists of strings using the "merge-sort" algorithm. Merge-sort is 
+a sorting algorithm that sorts large inputs extremely quickly. It is also the best possible algorithm to use for sorting 
+linked-lists. 
+
+Learning goals for this assignment include:
+
+#1 Recursion
+#2 Linked-lists (dynamic structures)
+#3 Memory management
+
+Included in this assignment is a file called "example.c". This file contains the code for merge-sorting arrays of strings. Your 
+task for this assignment involves re-implementing this code to work with linked-lists. While the result may look different, the 
+essential idea will be the same.
+
+Side note: Merge-sorting arrays requires a buffer that is proportional to the size of the array. It is for this reason that we 
+use qsort (quick sort) instead of merge-sort. However, merge-sort is always superior with linked-lists.
+
+#####Breakdown of Files Included#####
+
+1. answer06.h: Header file contains the declarations that you must implement. These functions must be implemented in a file call 
+"answer06.c"
+2. example.c: Example code that implements merge-sort with arrays of strings. Feel free to do whatever you want with this file 
+as you will not submit it. It is only to give you hints on completing this assignment.
+3. README: This file
+
+
+
+#####Merge sort explained#####
+Merge-sort works recursively as follows:
+
+#1 Base Case:
+The simplest case is when sorting a linked list of length 0 or 1. You'll never have to sort such lists as they are already 
+"sorted". To implement the base case, simply return the input list if its length is 0 or 1 (here we see how base cases are often 
+trivial).
+
+#2 Recursive Case:
+Let's assume that we know how to sort smaller lists already (you could say that we in fact do know, since we have established 
+the base cases). In the recursive case, we do the following:
+	#2.a Divide the list into two smaller lists of equal size, +/- one node.
+	#2.b Recursively sort each of the two smaller lists.
+	#2.c You now have two small lists that are sorted. Now the only thing left to do is two "merge" the smaller two lists 
+	together to form the final sorted list:
+		#2.c.i Create a brand new empty list, which will be final list.
+		#2.c.ii While both small lists are non-empty, look at the head node of each. Take the smaller head node off the front of 
+		it's list, and append it to the result-list.
+		#2.c.iii At some point, one (or both) of the smaller lists will become empty. At this point, append the non-empty list 
+		(if there is one) onto the end of the result-list.
+		
+Once we've completed that, we're done with merge sort.
+
+There is never a need to allocate or copy memory (or create new Nodes) when merge-sorting linked lists. In order to have your 
+functions pass, you must not allocate or create list-nodes when sorting. It is important to learn how to do this to better 
+understand how to manipulate linked lists. Hints on how to do this are included in the "answer06.h" header file.
+ 
+ 
+#####Assignment Submission#####
+You must submit one file, answer06.c, on Blackboard.
+
+#####Grading#####
+There are 5 functions to complete in answer06.c. Successfully writing List_merge and List_sort are worth 35% of the grade, each. 
+Remember to NOT call malloc or List_createNode when implementing List_merge. The remaining 3 functions are worth 10% each.
+
+In order to not cause any compiler errors when grading please make sure your file adheres to the following:
++Please do not include a main function in the filing containing your function definitions.
++Be sure to include the header file in the .c file with your function definitions.
++If you choose not to complete one of the functions, please include an empty function definition that returns the correct 
+data-type. For example, a blank function definition for List_sort may look like the following:
+
+List * List_sort(List * list, int (*compar)(const char *, const char*))
+{
+	return NULL;
+}
+
+If your program has any errors that prevent it from executing or compilation warnings, you will fail the 
+assignment. 
+
+If you have memory leaks, your point total on this assignment will be deducted by 50% (so if you get 
+70% of the functions correct but you have memory errors, you'll end up getting 35% on the assignment). You can check for memory 
+leaks using Valgrind with the following command:
+
+valgrind --tool=memcheck --leak-check=full --verbose PROGRAM_NAME PROGRAM_ARGUMENTS

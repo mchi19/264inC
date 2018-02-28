@@ -1,0 +1,55 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "answer06.h"
+
+int printNode(List *);
+
+int compar(const char * j, const char * k){
+    if ((j == NULL) || (k == NULL)){
+        return 1;
+    }
+    else
+        return strcmp(j,k);
+}
+int main (){
+
+	List * list = List_createNode(NULL);
+    List * curr = List_createNode("cg");
+    curr -> next = list;
+    list = curr;
+   // curr = List_createNode("ch");
+    //curr -> next = list;
+   // list = curr;
+	
+   /* List * list1 = List_createNode("d");
+    List * curr1 = List_createNode("b");
+    curr1 -> next = list1;
+    list1 = curr1;
+*/
+    //printNode(list);
+	//printNode(list);
+
+	//int length;
+ //   length = List_length(list);
+  //  printf("length : %d\n", length);
+
+    //List * b = List_merge(list, list1, strcmp);
+    //printNode(b);
+
+    List * c = List_sort(list, compar);
+   printNode(c);
+    List_destroy(c);
+
+    return 0;
+}
+
+int printNode(List * list){
+
+	while(list != NULL){
+		printf("%s \n", list -> str);
+		list = list -> next;
+	}
+	return 0;
+}

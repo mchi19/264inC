@@ -1,0 +1,246 @@
+Program Assignment #8
+
+Please read the entire README before starting your assignment or asking for help.
+
+#####Breakdown of Files Included#####
+1. answer08.h : Header file containing function declarations and documentation. You must implement each of the declared 
+functions in the file answer08.c unless otherwise specified.
+2. answer08.c: Contains the functions for stage 0, stage 1 and stage 3 completed for you. 
+You must complete the rest of the functions (specified in answer08.h) for stage2.
+3. pa08.c : The main function that you'll use to run your program based on the specifications in this README. Do *NOT* 
+edit this file
+4. tester: An executable file you can use on Linux machines to test your functions. More info on this file in the "Testing" section.
+5. README: This file.
+
+#####Description of Task#####
+The learning goals for this assignment include:
+#1 Recursion
+#2 Binary trees to efficiently manage a collection of unique items
+#3 Managing memory
+
+This assignment asks you to generate the states of puzzle known as the 15-puzzle.  The 15 puzzle is a popular game.  
+There are 15 squares in a 4 x 4 box.  One is empty.  The solved state is shows below
+
+1  2  3  4
+5  6  7  8
+9  A  B  C
+D  E  F  -
+
+Here, we use A to F for numbers 10 to 15. "-" is used to denote the empty space.  To play this game, you can move the 
+space.  For example, moving "-" up changes the state to
+
+1  2  3  4
+5  6  7  8
+9  A  B  -
+D  E  F  C
+
+Moving "-" left changes the state to
+
+1  2  3  4
+5  6  7  8
+9  A  -  B
+D  E  F  C
+
+To solve this state, you can move "-" right and down.  However, if you move it down and right, you will get this state
+
+1  2  3  4
+5  6  7  8
+9  A  F  B
+D  E  C  -
+
+To make it simple, we will express each state by a single line from the upper left side to the lower right side.  The 
+solved state is expressed as
+
+123456789ABCDEF- 
+
+There is no space between the numbers.
+
+123456789A-BDEFC expresses the following state
+
+1  2  3  4
+5  6  7  8
+9  A  -  B
+D  E  F  C
+
+Please notice that we do not use "10"; we use "A" instead.
+
+There are 3 stages involved in this program:
+
+1. Given a valid state and a sequence, output the final state. A sequence contains only four possible moves: 
+   R: move space right
+   L: move space left
+   U: move space up
+   D: move space down
+   
+2. Give a valid state and a number n, output all possible states after
+   zero to n moves.
+
+3. Give a valid state, find a sequence that can move to the initial
+   (solved) state.
+
+These stages are described in detail below. 
+
+Stages 0,1 and 3 have been completed for you but are included for the sake of completeness. You will only need to complete 
+stage 2 for this assignment. What functions that entails are indicated in answer08.h and answer08.c
+
+#####Stage 0: Checking Inputs#####
+This isn't really a stage of the assignment; however you will need to check that input arguments are valid. There are two 
+functions that should be written:
+
+#1 isValidState(...)
+#2 isValidMoseList(...)
+
+These are described in "answer08.h"
+
+The program should also check that argv[1] is either "1", "2", or "3". If it is none of these (or doesn't exist), then 
+return EXIT_FAILURE.
+
+#####Stage 1: Processing a Move List#####
+The program's inputs (argv) has three arguments:
++ argv[1]: "1" means stage 1
++ argv[2]: a string as a valid state
++ argv[3]: another string as the move sequence
+
+If argv[2] is not a valid board state, or if argv[3] is not a valid move-list, then return EXIT_FAILURE.
+
+Otherwise, process the moves in the move-list, and print out the new board state, and return EXIT_SUCCESS.
+
+It is possible that the move sequence will produce an invalid state. For example, if the input is the initial state and 
+the sequence starts with D, the result is an invalid state.  The output should be "I", and you should still return 
+EXIT_SUCCESS.
+
+Here are some sample outputs:
+
+ > ./pa08 1 123456789AFBDE-C U
+123456789A-BDEFC
+
+ > ./pa08 1 123456789AFBDE-C UUU
+12-456389A7BDEFC
+
+ > ./pa08 1 123456789AFBDE-C D
+I
+
+ > ./pa08 1 123456789AFBDE-C LLUUU
+-23416785AFB9DEC
+
+
+
+##### Stage 2: Generate a MoveTree#####
+This is the stage you will have to complete for this assignment
+The program's inputs (argv) has three arguments:
++ argv[1]: "2" means stage 2
++ argv[2]: a string as a valid state
++ argv[3]: a number between 0 and 9 (inclusive)
+
+
+If argv[2] is not a valid board state, or if argv[3] is not a valid integer between [0..9] inclusive, then return 
+EXIT_FAILURE.
+
+Otherwise, the program should generate *unique* states after zero to so many moves, and return EXIT_SUCCESS.
+
+You do not need to worry about the order of these states since the states will be sorted before grading.
+
+You program should not print duplicate states.  One way to check is to send your program to the sort program in Linux and 
+then use the uniq program in Linux.  Adding "-d" after uniq will print duplicates.  This is a way to check.
+
+ > ./pa08 2 state num | sort | uniq -d
+ 
+ Here are some sample outputs:
+
+ > ./pa08 2 123-456789AFBDEC 1
+123-456789AFBDEC
+12-3456789AFBDEC
+1237456-89AFBDEC
+
+ > ./pa08 2 123-456789AFBDEC 2
+123-456789AFBDEC
+12-3456789AFBDEC
+1-23456789AFBDEC
+1237456-89AFBDEC
+123745-689AFBDEC
+1237456F89A-BDEC
+126345-789AFBDEC
+
+ > ./pa08 2 123-456789AFBDEC 3
+123-456789AFBDEC
+12-3456789AFBDEC
+1-23456789AFBDEC
+-123456789AFBDEC
+12-7453689AFBDEC
+1237456-89AFBDEC
+123745-689AFBDEC
+12374-5689AFBDEC
+1237456F89A-BDEC
+1237456F89-ABDEC
+1237456F89ACBDE-
+123745A689-FBDEC
+126345-789AFBDEC
+12634-5789AFBDEC
+126345A789-FBDEC
+1263457-89AFBDEC
+15234-6789AFBDEC
+
+For stage 2, your program needs to remember a state and does not have duplicate states.  You should use a binary tree to 
+keep the states.
+
+#####Stage 3: Solving the Puzzle#####
+The program's inputs (argv) has two arguments:
++ argv[1]: "3" means stage 3
++ argv[2]: a string as a valid state
+
+If argv[2] is not a valid board state then return EXIT_FAILURE.
+
+Otherwise, the program should generate a sequence that moves the puzzle to the initial state, and return EXIT_SUCCESS. 
+The length of this sequence must be between 1 and 9 (inclusive). Always return EXIT_SUCCESS, even if no solution is found.
+
+Below is some sample output:
+
+ > ./pa08 3 -23416785ABC9DEF
+DDDRRR
+
+Note that a solution could be up to 80 moves long, which is impossible to calculate with this approach. However, this 
+assignment is instructive, in that it shows that, in general, brute-force solutions work for tiny problems only. Brute 
+force solutions often require more time and energy to solve than is available in the known universe, and so knowing _how_ 
+to get a solution is not the same as being _able_ to calculate it. This is a major road-block in artificial intelligence.
+
+#####Testing#####
+Since you have less time to complete this assignment, I have included a testing program to help you test your program. 
+However, each time you run the tester it will run slower. This is to encourage you to check your work on your own before 
+using it.
+
+To use it, simply run it on the command line as such in a Linux environment
+
+> ./tester
+
+The tester program will run valgrind with test it runs and place it in a folder called output-tester.
+
+If you try running the tester and it says "Permission Denied", try running the following command:
+
+chmod 777 tester
+
+#####Assignment Submission#####
+You must submit your completed answer08.c to Blackboard
+
+If you choose not to complete a certain function, place an empty function definition in your submitted file (more details 
+under the Grading section). 
+
+Following the instructions is part of getting the assignment correct, so please follow the submission instructions.
+
+#####Grading#####
+There are five functions in all you need to complete. For each testcase you fail, you will lose 5% of the final grade of 
+this assignment (so if you fail 4 testcases you will lose 20%)
+
+In order to not cause any compiler errors when grading please make sure your file adheres to the following:
++Please do not include a main function in the filing containing your function definitions.
++Be sure to include the header file in the .c file with your function definitions.
++If you choose not to complete one of the functions, please include an empty function definition that returns the correct data-type.
+
+If your program has any errors that prevent it from executing or compilation warnings, you will fail the 
+assignment. 
+
+If you have memory leaks, your point total on this assignment will be deducted by 50% (so if you get 
+70% of the functions correct but you have memory leaks, you'll end up getting 35% on the assignment). You can check for 
+memory leaks using Valgrind with the following command:
+
+valgrind --tool=memcheck --leak-check=full --verbose PROGRAM_NAME PROGRAM_ARGUMENTS
+

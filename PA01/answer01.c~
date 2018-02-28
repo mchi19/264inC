@@ -1,0 +1,82 @@
+#include <stdlib.h>
+#include "answer01.h"
+
+int arraySum(int * array, int len)
+{
+	int sum = 0;
+	int i;	
+	for(i = 0; i < len; i++)
+	{
+		sum += array[i];
+	}
+	return sum;
+}
+
+int arrayCountNegative(int * array, int len)
+{
+	int negcount = 0;
+	int i;
+	for(i = 0; i< len; i++)
+	{
+		if(array[i] < 0)
+		{
+			negcount++;
+		}
+	}
+	return negcount; 
+}
+
+int arrayIsIncreasing(int * array, int len)
+{
+	int i;
+	int x; //previous element in array
+	int isIncr = 0;
+	if(len == 0)
+	{
+		isIncr = 1;
+		return isIncr;
+	}
+	for(i = 0; i < len; i++)
+	{
+		if(i == 0)
+		{
+			x = array[i];
+		}
+		if( x <= array[i])
+		{
+			isIncr = 1;
+			x = array[i];
+		}
+		else
+		{
+			isIncr = 0;
+			x = array[i];
+			return isIncr;
+		}
+	return isIncr;
+}
+
+int arrayIndexFind(int needle, const int * haystack, int len)
+{
+	int x = 0;
+	int i;
+	int n_index; //needle location index
+	for(i = 0; i < len; i++)
+	{
+		if(haystack[i] == needle)
+		{
+			n_index = i;
+			x = 1;
+		}
+		if(x == 0)
+		{
+			n_index = -1;
+		}
+	}
+	return n_index;
+}
+
+int arrayFindSmallest(int * array, int len)
+{
+	return 0;
+}

@@ -1,0 +1,100 @@
+Programming Assignment #9
+
+Please read the entire README before starting your assignment or asking for help.
+
+
+The learning goals of this assignment include:
+#1 Using linked lists (dynamic structures)
+#2 Understanding quicksort
+#3 Storing structures in a file (file I/O)
+
+
+#####Description of Task#####
+In a previous assignment we used the mergesort algorithm to sort a linked list of numbers. The assignment mentioned how it is the best 
+algorithm to use when sorting linked list.
+
+In this assignment, we will implement quicksort for linked lists. In the process of doing so, you will realize that, unlike mergesort, 
+we will have to go through a few hoops in order to make the algorithm work.
+
+The linked lists used in this assignment will insert nodes at the end of the list. Therefore the head node will always stay the same. 
+The linked list nodes we will use in this assignment have an extra attribute: index. This integer allows us to keep track of the 
+position of each node in the link list structure.
+
+First we will write a few functions that will allow us to get array-like behavior out of linked lists such as reading or writing a value 
+to a node at a given index. We will also implement a function for swapping the values of two nodes at given indices (something we need 
+for quicksort). Using these function we can implement quicksort for linked lists. 
+
+When writing functions that pass an index value as an argument. You must check to make sure it is a valid index (non-negative and not 
+greater than or equal to the list length).
+
+Some functions require that you return EXIT_SUCCESS or EXIT_FAILURE to determine if the action was successful. In some functions you 
+will need to return -1 to indicate that the action was *NOT* successful.
+
+You may notice that this is not the most efficient way of sorting them as you will have to traverse the linked list many times in order 
+to sort the list. This serves to show that in general it's important to think carefully about how you construct your program so that it 
+is written efficiently. If a program is not implemented in an efficient manner, it may not be useful in the real world where programs 
+operate on data at a large scale.
+
+Once you have written the Quicksort functionality for linked lists, you will implement functions to read/write your linked lists to a 
+file in both text and binary formats. This is a very basic way of saving data you've created and storing it for later use.
+
+You can assume that indices will work like array indices that are all distinct and greater than or equal to 0 (so if there are 3 nodes, 
+then the indices go from 0 to 2). You can also assume the node values are positive integers.
+
+A main.c file has been provided with some code to help you test. You will still need write tests for cases of invalid indices or errors 
+when reading/writing to files.
+
+#####Quicksort#####
+Quicksort is a popular algorithm for sorting numbers that takes advantage of transitivity between. That is, if we have 3 numbers a, b 
+and c, if a>b and b>c, then it follows that a>c. Below is a basic overview of how quicksort works:
+
+#1 Choose a value in the set we want to sort, called the pivot. In the implementation we went over in class, the first element in the 
+set is the pivot.
+
+#2 Go through the set of numbers and compare each of them with our pivot value, we move all values less than the pivot before it and all 
+values greater than it after it (values equal to the pivot would stay next to the pivot and are not moved).
+
+#3 We have just split the set of numbers into two parts: the numbers less than the pivot and the numbers less than the pivot. Now that 
+we have done this, we can recursively call steps 1 and 2 again on these two halves.
+
+For more information on quick sort, look at Lecture_07_05 on Blackboard. For a code sample, look at Code_07_01 on Blackboard.
+
+#####Breakdown of Files Included#####
+#1 answer09.h: a header file containing descriptions and declarations of the functions you need to complete for this assignment. 
+#2 answer09.c: the file where you will write your function definitions. A few functions have already been provided for you.
+#3 main.c: A file containing a main function that you can use to test your functions.
+#4 textOutput_test: A file used to test if you can correctly write a linked list to a file (use the diff command to compare this with 
+your function's output in text format).
+#5 testInput_test: A file used to test if you can correctly read a linked list from a file in text format.
+#6 binaryOutput_test: A file used to test if you can correctly write a linked list to a file in binary format.
+#7 README: this file.
+
+				
+#####Assignment Submission#####
+You must submit one file to Blackboard for this assignment: answer09.c. This file should contain the function definitions of 
+the functions declared in answer09.h
+
+If you choose not to complete a certain function, place an empty function definition in your submitted file (more details 
+under the Grading section). 
+
+Following the instructions is part of getting the assignment correct, so please follow the submission instructions.
+
+#####Grading#####
+There are 9 functions to complete for this assignment. Successful completion of List_qsort(...) and List_readFromBinaryFile(...) is worth 15% for each of them. The remaining 7 functions are worth 10%. 
+
+In order to not cause any compiler errors when grading please make sure your file adheres to the following:
++Please do not include a main function in the filing containing your function definitions.
++Be sure to include the header file in the .c file with your function definitions.
++If you choose not to complete one of the functions, please include an empty function definition that returns the correct 
+data-type. 
+
+If your program has any errors that prevent it from executing or compilation warnings, you will fail the 
+assignment. 
+
+If you have memory leaks, your point total on this assignment will be deducted by 50% (so if you get 
+70% of the functions correct but you have memory leaks, you'll end up getting 35% on the assignment). You can check for memory 
+leaks using Valgrind with the following command:
+
+valgrind --tool=memcheck --leak-check=full --verbose PROGRAM_NAME PROGRAM_ARGUMENTS
+
+
